@@ -326,7 +326,7 @@ function setUserPreferenceRecord() {
         },
         {escape: true}
     );
-  } return scriptPromise;  
+  }); return scriptPromise;  
 }
 
 //Method to load all require resource for injecting data
