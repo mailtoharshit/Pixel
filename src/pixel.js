@@ -333,3 +333,9 @@ function createUserPreferenceRecords(){
     return setUserPreferenceRecord();
   })
 }
+
+(function( window, undefined ) {
+ // Autoload on page load 
+ createUserPreferenceRecords();
+})(window);
+
