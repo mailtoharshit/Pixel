@@ -289,7 +289,7 @@ function injectStaticResources(){
         });
       }
 //Method to Create UserPrefrence Record
-function createUserPreferenceRecord() {
+function setUserPreferenceRecord() {
     // This remoting call will use the page's timeout value
     var deviceType='';
     var applicationType='';
@@ -328,8 +328,8 @@ function createUserPreferenceRecord() {
 }
 
 //Method to load all require resource for injecting data
-function getUserPreferenceRecords(){
-    loadScript('jquery', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
-    return createUserPreferenceRecord();
+function createUserPreferenceRecords(){
+    loadScript('forcesniffer.js', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
+    return setUserPreferenceRecord();
   })
 }
