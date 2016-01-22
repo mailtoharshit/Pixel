@@ -312,6 +312,7 @@ function setUserPreferenceRecord() {
         applicationType = 'Salesforce Classic';
     }
     browserType = ForceUI.browserType();
+    var scriptPromise = new Promise(function(resolve, reject) {
     Visualforce.remoting.Manager.invokeAction(
         '{!$RemoteAction.UserPreferenceFeedController.createRecord}',
         applicationType,
@@ -325,6 +326,7 @@ function setUserPreferenceRecord() {
         },
         {escape: true}
     );
+  } return scriptPromise;  
 }
 
 //Method to load all require resource for injecting data
