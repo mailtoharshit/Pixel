@@ -1,7 +1,5 @@
-
-
 // function to load static resources with Promise
-function loadScript(id, url, success, failure) {
+function loadResourcesDynamically(id, url, success, failure) {
        var scriptPromise = new Promise(function(resolve, reject) {
          // Create a new script tag
          var script = document.createElement('script');
@@ -24,7 +22,7 @@ function loadScript(id, url, success, failure) {
        });
 
        return scriptPromise;
-     }
+}
 //function to define Chart
 function createChart(chartsType, JSONData, valueField, categoryField, divId) {
           switch (chartsType) {
@@ -274,7 +272,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
           }
         }      
 
-// function to SpinChart 
+// Method to Inject Required Resource to build the Charts
 function injectStaticResources(){
           loadScript('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js').then(function() {
           return loadScript('amcharts', '//www.amcharts.com/lib/3/amcharts.js');
@@ -290,10 +288,48 @@ function injectStaticResources(){
           console.log('Loaded!');
         });
       }
-// function to wrap everything into one Call
-function spinChart(chartsType, JSONData, valueField, categoryField, divId) 
-{
-  //call script injector 
-  injectStaticResources();
-  createChart(chartsType, JSONData, valueField, categoryField, divId);
+//Method to Create UserPrefrence Record
+function createUserPreferenceRecord() {
+    // This remoting call will use the page's timeout value
+    var deviceType='';
+    var applicationType='';
+    var browserType='';
+    var profileName='';
+
+    if (!isMobile.any){
+        deviceType = 'Desktop';
+    }
+    else if(isMobile.phone){
+        deviceType = 'Phone';
+    }
+    else if(isMobile.tablet){
+        deviceType = 'Tablet';
+    }
+    if(ForceUI.isSalesforce1()){
+        applicationType = 'Salesforce1';
+    }
+    else {
+        applicationType = 'Salesforce Classic';
+    }
+    browserType = ForceUI.browserType();
+    Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.UserPreferenceFeedController.createRecord}',
+        applicationType,
+        browserType,
+        deviceType,
+        '',
+        function(result, event){
+            if(event.status) {
+                console.log(result.Id);
+            }
+        },
+        {escape: true}
+    );
+}
+
+//Method to load all require resource for injecting data
+function getUserPreferenceRecords(){
+    loadScript('jquery', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
+    return createUserPreferenceRecord();
+  })
 }
