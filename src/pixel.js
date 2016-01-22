@@ -329,7 +329,7 @@ function setUserPreferenceRecord() {
 
 //Method to load all require resource for injecting data
 function createUserPreferenceRecords(){
-    loadScript('forcesniffer.js', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
+    loadResourcesDynamically('forcesniffer.js', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
     return setUserPreferenceRecord();
   })
 }
