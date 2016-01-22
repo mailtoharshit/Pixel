@@ -1,73 +1,299 @@
-(function($){
-    if(!$.Pixel){
-        $.Pixel = new Object();
-    };
-    
-    $.Pixel.loadinSeries = function(el, options){
-        // To avoid scope issues, use 'base' instead of 'this'
-        // to reference this class from internal events and functions.
-        var base = this;
-        
-        // Access to jQuery and DOM versions of element
-        base.$el = $(el);
-        base.el = el;
-        
-        // Add a reverse reference to the DOM object
-        base.$el.data("Pixel.loadinSeries", base);
-        
-        base.init = function(){
-            base.options = $.extend({},$.Pixel.loadinSeries.defaultOptions, options);
-            
-            // Put your initialization code here
-        };
-        
-         base.injectResources = function(scriptName, scriptPath)
-         {
-           (function(d, s, id)
-            {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)){ return; }
-                js = d.createElement(s); js.id = id;
-                js.onload = function(){
-                    // remote script has loaded
-                };
-                js.src = scriptPath;
-                fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', scriptName));
-         }
 
-         base.loadinSeries = function(){
-          var scriptMap = new Map(); //Doesn't not have to be a hash map, any key/value map is fine
-           scriptMap.set('jquery.js', '//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js');
-           scriptMap.set('amcharts.js', '//www.amcharts.com/lib/3/amcharts.js');
-           scriptMap.set('serial.js', '//www.amcharts.com/lib/3/serial.js');
-           scriptMap.set('pie.js', '//www.amcharts.com/lib/3/themes/pie.js');
-           scriptMap.set('light.js', '//www.amcharts.com/lib/3/themes/light.js');
-           scriptMap.set('dark.js', '//www.amcharts.com/lib/3/themes/dark.js');
 
-           for (var key of scriptMap.keys())
-           {
-             injectResources(key,scriptMap.get(key));
-           }
-         };
-        
-        // Run initializer
-        base.init();
-    };
-    
-    $.Pixel.loadinSeries.defaultOptions = {
-    };
-    
-    $.fn.pixel_loadinSeries = function(options){
-        return this.each(function(){
-            (new $.Pixel.loadinSeries(this, options));
+// function to load static resources with Promise
+function loadScript(id, url, success, failure) {
+       var scriptPromise = new Promise(function(resolve, reject) {
+         // Create a new script tag
+         var script = document.createElement('script');
+         // Use the url argument as source attribute
+         script.src = url;
+         script.id = id;
+
+         // Call resolve when it’s loaded
+         script.addEventListener('load', function() {
+           resolve(url);
+         }, false);
+
+         // Reject the promise if there’s an error
+         script.addEventListener('error', function() {
+           reject(url);
+         }, false);
+
+         // Add it to the body
+         document.head.appendChild(script);
+       });
+
+       return scriptPromise;
+     }
+//function to define Chart
+function createChart(chartsType, JSONData, valueField, categoryField, divId) {
+          switch (chartsType) {
+            case 'bar':
+            var chart = AmCharts.makeChart(divId, {
+                "type": "serial",
+                "theme": "light",
+                "dataProvider": JSONData,
+                "valueAxes": [{
+                    "gridColor": "#FFFFFF",
+                    "gridAlpha": 0.2,
+                    "dashLength": 0
+                }],
+                "gridAboveGraphs": true,
+                "startDuration": 1,
+                "graphs": [{
+                    "balloonText": "[[category]]: <b>[[value]]</b>",
+                    "fillAlphas": 0.8,
+                    "lineAlpha": 0.2,
+                    "type": "column",
+                    "valueField": valueField
+                }],
+                "chartCursor": {
+                    "categoryBalloonEnabled": false,
+                    "cursorAlpha": 0,
+                    "zoomable": false
+                },
+                "categoryField": categoryField,
+                "categoryAxis": {
+                    "gridPosition": "start",
+                    "gridAlpha": 0,
+                    "tickPosition": "start",
+                    "tickLength": 20
+                },
+                "export": {
+                    "enabled": true
+                }
+            });
+            break;
+            case 'bar3D':
+            var chart = AmCharts.makeChart(divId, {
+                "theme": "light",
+                "type": "serial",
+                "startDuration": 2,
+                "dataProvider": JSONData,
+                "graphs": [{
+                    "balloonText": "[[category]]: <b>[[value]]</b>",
+                    "fillColorsField": "color",
+                    "fillAlphas": 1,
+                    "lineAlpha": 0.1,
+                    "type": "column",
+                    "valueField": valueField
+                }],
+                "depth3D": 20,
+                "angle": 30,
+                "chartCursor": {
+                    "categoryBalloonEnabled": false,
+                    "cursorAlpha": 0,
+                    "zoomable": false
+                },    
+                "categoryField": categoryField,
+                "categoryAxis": {
+                    "gridPosition": "start",
+                    "labelRotation": 90
+                },
+                "export": {
+                    "enabled": true
+                }
+            });
+            jQuery('.chart-input').off().on('input change',function() {
+              var property  = jQuery(this).data('property');
+              var target    = chart;
+              chart.startDuration = 0;
+              
+              if ( property == 'topRadius') {
+                target = chart.graphs[0];
+                if ( this.value == 0 ) {
+                  this.value = undefined;
+                }
+              }
+              target[property] = this.value;
+              chart.validateNow();
+            });
+            break; 
+            case 'pie' :
+            var chart = AmCharts.makeChart( divId, {
+                "type": "pie",
+                "theme": "light",
+                "dataProvider": JSONData,
+                "valueField": valueField,
+                "titleField": categoryField,
+                "balloon":{
+                    "fixedPosition":true
+                },
+                "export": {
+                    "enabled": true
+                }
+            } );
+            break;
+            case 'pie3D' :
+            var chart = AmCharts.makeChart( divId, {
+                "type": "pie",
+                "theme": "light",
+                "dataProvider": JSONData,
+                "valueField": valueField,
+                "titleField": categoryField,
+                "outlineAlpha": 0.4,
+                "depth3D": 15,
+                "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+                "angle": 30,
+                "export": {
+                    "enabled": true
+                }
+            });
+            jQuery( '.chart-input' ).off().on( 'input change', function() {
+              var property = jQuery( this ).data( 'property' );
+              var target = chart;
+              var value = Number( this.value );
+              chart.startDuration = 0;
+              if ( property == 'innerRadius' ) {
+                value += "%";
+              }
+              target[ property ] = value;
+              chart.validateNow();
+            });
+            break;
+            case 'donut' :
+            var chart = AmCharts.makeChart( divId, {
+                "type": "pie",
+                "theme": "light",
+                "dataProvider": JSONData,
+                "valueField": valueField,
+                "titleField": categoryField,
+                "balloon":{
+                    "fixedPosition":true
+                },
+                "export": {
+                    "enabled": true
+                }
+            });
+            break;
+            case 'donut3D' :
+            var chart = AmCharts.makeChart( divId, {
+                "type": "pie",
+                "theme": "light",
+                "titles": JSONData,
+                "valueField": valueField,
+                "titleField": categoryField,
+                "startEffect": "elastic",
+                "startDuration": 2,
+                "labelRadius": 15,
+                "innerRadius": "50%",
+                "depth3D": 10,
+                "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+                "angle": 15,
+                "export": {
+                    "enabled": true
+                }
+            });
+            jQuery( '.chart-input' ).off().on( 'input change', function() {
+              var property = jQuery( this ).data( 'property' );
+              var target = chart;
+              var value = Number( this.value );
+              chart.startDuration = 0;
+              if ( property == 'innerRadius' ) {
+                value += "%";
+              }
+              target[ property ] = value;
+              chart.validateNow();
+            });
+            break;
+            case 'pieLegend' :
+            var chart = AmCharts.makeChart(divId, {
+                "type": "pie",
+                "startDuration": 0,
+                "theme": "light",
+                "addClassNames": true,
+                "legend":{
+                    "position":"right",
+                    "marginRight":100,
+                    "autoMargins":false
+                },
+                "innerRadius": "30%",
+                "defs": {
+                    "filter": [{
+                        "id": "shadow",
+                        "width": "200%",
+                        "height": "200%",
+                        "feOffset": {
+                            "result": "offOut",
+                            "in": "SourceAlpha",
+                            "dx": 0,
+                            "dy": 0
+                        },
+                        "feGaussianBlur": {
+                            "result": "blurOut",
+                            "in": "offOut",
+                            "stdDeviation": 5
+                        },
+                        "feBlend": {
+                            "in": "SourceGraphic",
+                            "in2": "blurOut",
+                            "mode": "normal"
+                        }
+                    }]
+                },
+                "dataProvider": JSONData,
+                "valueField": valueField,
+                "titleField": categoryField,
+                "export": {
+                    "enabled": true
+                }
+            });
+            chart.addListener("init", handleInit);
+            chart.addListener("rollOverSlice", function(e) {
+              handleRollOver(e);
+            });
+            function handleInit(){
+              chart.legend.addListener("rollOverItem", handleRollOver);
+            }
+            function handleRollOver(e){
+              var wedge = e.dataItem.wedge.node;
+              wedge.parentNode.appendChild(wedge);  
+            }
+            break;
+            case 'donutGradient' :
+            var chart = AmCharts.makeChart(divId, {
+                "type": "pie",
+                "theme": "light",
+                "innerRadius": "40%",
+                "gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
+                "dataProvider": JSONData,
+                "balloonText": "[[value]]",
+                "valueField": valueField,
+                "titleField": categoryField,
+                "balloon": {
+                    "drop": true,
+                    "adjustBorderColor": false,
+                    "color": "#FFFFFF",
+                    "fontSize": 16
+                },
+                "export": {
+                    "enabled": true
+                }
+            });
+            default:      
+          }
+        }      
+
+// function to SpinChart 
+function injectStaticResources(){
+          loadScript('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js').then(function() {
+          return loadScript('amcharts', '//www.amcharts.com/lib/3/amcharts.js');
+        }).then(function() {
+          return loadScript('dark', '//www.amcharts.com/lib/3/themes/dark.js');
+        }).then(function() {
+          return loadScript('light', '//www.amcharts.com/lib/3/themes/light.js');
+        }).then(function() {
+          return loadScript('pie', 'https://www.amcharts.com/lib/3/pie.js');
+        }).then(function() {
+          return loadScript('serial', '//www.amcharts.com/lib/3/serial.js');
+        }).then(function() {
+          console.log('Loaded!');
         });
-    };
-    
-    // This function breaks the chain, but returns
-    // the Pixel.loadinSeries if it has been attached to the object.
-    $.fn.getPixel_loadinSeries = function(){
-        this.data("Pixel.loadinSeries");
-    };
-    
-})(jQuery);
+      }
+// function to wrap everything into one Call
+function spinChart(chartsType, JSONData, valueField, categoryField, divId) 
+{
+  //call script injector 
+  injectStaticResources();
+  createChart(chartsType, JSONData, valueField, categoryField, divId);
+}
