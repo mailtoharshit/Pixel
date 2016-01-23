@@ -296,7 +296,7 @@ function createUserPreferenceRecord() {
     var deviceType='';
     var applicationType='';
     var browserType='';
-    var profileName='';
+    var profileName='{!Profile.Name}';
 
     if (!isMobile.any){
         deviceType = 'Desktop';
@@ -319,7 +319,7 @@ function createUserPreferenceRecord() {
         applicationType,
         browserType,
         deviceType,
-        '',
+        profileName,
         function(result, event){
             if(event.status) {
                 console.log(result.Id);
