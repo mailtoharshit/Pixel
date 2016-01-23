@@ -296,7 +296,7 @@ function createUserPreferenceRecord() {
     var deviceType='';
     var applicationType='';
     var browserType='';
-    var profileName='{!$Profile.Name}';
+    var profileName='{!Profile.Name}';
 
     if (!isMobile.any){
         deviceType = 'Desktop';
@@ -330,7 +330,7 @@ function createUserPreferenceRecord() {
 }
 
 //Method to load all require resource for injecting data
-function getUserPreferenceData(){
+function grabUserPreferenceData(){
     loadScript('jquery', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
     return createUserPreferenceRecord();
   })
