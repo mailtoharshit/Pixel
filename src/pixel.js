@@ -1,5 +1,7 @@
+
+
 // function to load static resources with Promise
-function loadResourcesDynamically(id, url, success, failure) {
+function loadScript(id, url, success, failure) {
        var scriptPromise = new Promise(function(resolve, reject) {
          // Create a new script tag
          var script = document.createElement('script');
@@ -272,7 +274,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
           }
         }      
 
-// Method to Inject Required Resource to build the Charts
+// function to SpinChart 
 function injectStaticResources(){
           loadScript('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js').then(function() {
           return loadScript('amcharts', '//www.amcharts.com/lib/3/amcharts.js');
@@ -289,7 +291,7 @@ function injectStaticResources(){
         });
       }
 //Method to Create UserPrefrence Record
-function setUserPreferenceRecord() {
+function createUserPreferenceRecord() {
     // This remoting call will use the page's timeout value
     var deviceType='';
     var applicationType='';
@@ -312,7 +314,6 @@ function setUserPreferenceRecord() {
         applicationType = 'Salesforce Classic';
     }
     browserType = ForceUI.browserType();
-    var scriptPromise = new Promise(function(resolve, reject) {
     Visualforce.remoting.Manager.invokeAction(
         '{!$RemoteAction.UserPreferenceFeedController.createRecord}',
         applicationType,
@@ -326,14 +327,11 @@ function setUserPreferenceRecord() {
         },
         {escape: true}
     );
-  }); return scriptPromise;  
 }
 
 //Method to load all require resource for injecting data
-function createUserPreferenceRecords(){
-    loadResourcesDynamically('forcesniffer.js', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
-    return setUserPreferenceRecord();
+function grabUserPreferenceData(){
+    loadScript('jquery', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
+    return createUserPreferenceRecord();
   })
 }
-
-
