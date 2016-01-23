@@ -296,7 +296,7 @@ function createUserPreferenceRecord() {
     var deviceType='';
     var applicationType='';
     var browserType='';
-    var profileName='{!Profile.Name}';
+    var profileName='{!$Profile.Name}';
 
     if (!isMobile.any){
         deviceType = 'Desktop';
