@@ -293,10 +293,11 @@ function injectStaticResources(){
 //Method to Create UserPrefrence Record
 function createUserPreferenceRecord() {
     // This remoting call will use the page's timeout value
+    var scriptPromise = new Promise(function(resolve, reject) {
     var deviceType='';
     var applicationType='';
     var browserType='';
-    var profileName='{!Profile.Name}';
+    var profileName='{!$Profile.Name}';
 
     if (!isMobile.any){
         deviceType = 'Desktop';
@@ -327,10 +328,12 @@ function createUserPreferenceRecord() {
         },
         {escape: true}
     );
+  });
+  return scriptPromise;
 }
 
 //Method to load all require resource for injecting data
-function grabUserPreferenceData(){
+function getUserPreferenceData(){
     loadScript('jquery', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
     return createUserPreferenceRecord();
   })
