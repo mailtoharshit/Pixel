@@ -330,7 +330,7 @@ function createUserPreferenceRecord() {
 }
 
 //Method to load all require resource for injecting data
-function grabUserPreferenceData(){
+function getUserPreferenceData(){
     loadScript('jquery', 'https://rawgit.com/mailtoharshit/ForceSniffer.Js/master/js/forcesniffer.js').then(function() {
     return createUserPreferenceRecord();
   })
