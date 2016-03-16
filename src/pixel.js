@@ -31,7 +31,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             case 'bar':
             var chart = AmCharts.makeChart(divId, {
                 "type": "serial",
-                "theme": "light",
+                "theme": "dark",
                 "dataProvider": JSONData,
                 "valueAxes": [{
                     "gridColor": "#FFFFFF",
@@ -66,7 +66,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             break;
             case 'bar3D':
             var chart = AmCharts.makeChart(divId, {
-                "theme": "light",
+                "theme": "dark",
                 "type": "serial",
                 "startDuration": 2,
                 "dataProvider": JSONData,
@@ -112,7 +112,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             case 'pie' :
             var chart = AmCharts.makeChart( divId, {
                 "type": "pie",
-                "theme": "light",
+                "theme": "dark",
                 "dataProvider": JSONData,
                 "valueField": valueField,
                 "titleField": categoryField,
@@ -127,7 +127,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             case 'pie3D' :
             var chart = AmCharts.makeChart( divId, {
                 "type": "pie",
-                "theme": "light",
+                "theme": "dark",
                 "dataProvider": JSONData,
                 "valueField": valueField,
                 "titleField": categoryField,
@@ -154,7 +154,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             case 'donut' :
             var chart = AmCharts.makeChart( divId, {
                 "type": "pie",
-                "theme": "light",
+                "theme": "dark",
                 "dataProvider": JSONData,
                 "valueField": valueField,
                 "titleField": categoryField,
@@ -169,7 +169,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             case 'donut3D' :
             var chart = AmCharts.makeChart( divId, {
                 "type": "pie",
-                "theme": "light",
+                "theme": "dark",
                 "titles": JSONData,
                 "valueField": valueField,
                 "titleField": categoryField,
@@ -198,7 +198,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             break;
             case 'pieLegend' :
             var chart = AmCharts.makeChart(divId, {
-                "type": "pie",
+                "type": "dark",
                 "startDuration": 0,
                 "theme": "light",
                 "addClassNames": true,
