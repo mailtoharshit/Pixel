@@ -200,7 +200,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             var chart = AmCharts.makeChart(divId, {
                 "type": "dark",
                 "startDuration": 0,
-                "theme": "light",
+                "theme": "dark",
                 "addClassNames": true,
                 "legend":{
                     "position":"right",
@@ -253,7 +253,7 @@ function createChart(chartsType, JSONData, valueField, categoryField, divId) {
             case 'donutGradient' :
             var chart = AmCharts.makeChart(divId, {
                 "type": "pie",
-                "theme": "light",
+                "theme": "dark",
                 "innerRadius": "40%",
                 "gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
                 "dataProvider": JSONData,
@@ -281,7 +281,7 @@ function injectStaticResources(){
         }).then(function() {
           return loadScript('dark', '//www.amcharts.com/lib/3/themes/dark.js');
         }).then(function() {
-          return loadScript('light', '//www.amcharts.com/lib/3/themes/light.js');
+          return loadScript('dark', '//www.amcharts.com/lib/3/themes/dark.js');
         }).then(function() {
           return loadScript('pie', 'https://www.amcharts.com/lib/3/pie.js');
         }).then(function() {
